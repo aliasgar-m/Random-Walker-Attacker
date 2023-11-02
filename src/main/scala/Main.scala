@@ -1,9 +1,11 @@
 package com.lsc
 
 import GraphXGeneration.GraphXModel
+import MitMAttacker.Attacker.Attack
 import MitMAttacker.Matcher.Match
 import MitMAttacker.RandomWalker.Walker
 import Utilz.{CreateLogger, FileOperations, RWAConfig}
+
 import org.apache.spark
 
 /** Does something very simple */
@@ -30,9 +32,9 @@ object Main {
       val perGraphXModel = GraphXModel(inputNetGraph = perNetGraph.get, sc = sparkContext)
 
       val trails = List.range(0, RWAConfig.noOfTrials)
-      val trailResults = trails.map(trial => trial -> perGraphXModel.walk().matchPairs(orgGraphXModel))
+      val trailResults = trails.map(trial => trial -> perGraphXModel.walk().matchPairs(orgGraphXModel).attack())
 
-//      trailResults.foreach(trial => { println(trial._2.toList); println("")})
+      trailResults.foreach(trial => { println(trial._2) })
     }
     else {
       logger.error("Either the Original or Perturbed NetGraph is empty.")
@@ -62,3 +64,5 @@ object Main {
 
 // MATCHER
 // ASSUME TAKING FIRST VALUE OF THE FILTER PROCESS. HIGHLY UNLIKELY THAT TWO PAIRS WILL HAVE IDENTICAL SIMILARITY.
+// CAN I CHANGE MATCHER'S MAP CODE TO MAP / REDUCE IN DISTRIBUTED SYSTEM FORMAT?
+

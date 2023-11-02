@@ -27,4 +27,6 @@ object RWAConfig {
   val storedValueWeight: Double = config.getDouble("RWAApp.matcher.storedValueWeight")
 
   val matchingThreshold: Double = config.getDouble("RWAApp.matcher.matchingThreshold")
+
+  val attackingThreshold: Double = config.getDouble("RWAApp.attacker.attackingThreshold")
 }

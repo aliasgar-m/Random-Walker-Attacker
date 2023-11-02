@@ -2,6 +2,7 @@ package MitMAttacker
 
 import GraphXGeneration.{Edge_, Node}
 import Utilz.{CreateLogger, RWAConfig}
+
 import org.apache.spark.graphx
 import org.apache.spark.graphx._
 import org.apache.spark.rdd.RDD
@@ -12,27 +13,28 @@ object Matcher {
   private val logger: Logger = CreateLogger(this.getClass)
 
   /** Does something very simple */
-  implicit class Match(walkedNodes: RDD[(VertexId, Node)]) extends Serializable{
+  implicit class Match(walkedNodes: RDD[(VertexId, Node)]) extends Serializable {
     /** Does something very simple */
-    def matchPairs(orgGraph: Graph[Node, Edge_]): Array[((VertexId, VertexId), Double)] = {
+    def matchPairs(orgGraph: Graph[Node, Edge_]): List[(((VertexId, Node), (VertexId, Node)), Double)] = {
       val impOriginalNodes = orgGraph.vertices.filter(node => node._2.valuableData).collect
       val matches = walkedNodes.mapPartitions(partition => generateMatches(partition, impOriginalNodes)).collect
-      matches
+      matches.toList
     }
 
     /** Does something very simple */
     private def generateMatches(part: Iterator[(VertexId, Node)], orgNodes: Array[(VertexId, Node)]):
-    Iterator[((VertexId, VertexId), Double)] = {
+    Iterator[(((VertexId, Node), (VertexId, Node)), Double)] = {
       val partPerNodes = part.toList
       val partPerNodeSim = partPerNodes.map(perNode => generateSimilarity(perNode, orgNodes))
       val thresholdExceedPairs = partPerNodeSim.filter(entry => entry._2 >= RWAConfig.matchingThreshold)
+
       thresholdExceedPairs.iterator
     }
 
     /** Does something very simple */
     private def generateSimilarity(perNode: (graphx.VertexId, Node), orgNodes: Array[(graphx.VertexId, Node)]):
-    ((VertexId, VertexId), Double) = {
-      val similarityMeasureMap = orgNodes.map(orgNode => (perNode._1, orgNode._1) -> {
+    (((VertexId, Node), (VertexId, Node)), Double) = {
+      val similarityMeasureMap = orgNodes.map(orgNode => (perNode, orgNode) -> {
         RWAConfig.childrenWeight * validate(perNode._2.children, orgNode._2.children) +
         RWAConfig.propertiesWeight * validate(perNode._2.props, orgNode._2.props) +
         RWAConfig.currentDepthWeight * validate(perNode._2.currentDepth, orgNode._2.currentDepth) +

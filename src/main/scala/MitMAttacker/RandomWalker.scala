@@ -4,6 +4,7 @@ import GraphXGeneration.{Edge_, Node}
 import Utilz.{CreateLogger, RWAConfig}
 import org.apache.spark.graphx
 import org.apache.spark.graphx.{EdgeTriplet, Graph, VertexId}
+import org.apache.spark.rdd.RDD
 import org.slf4j.Logger
 
 import scala.annotation.tailrec
@@ -73,7 +74,7 @@ object RandomWalker {
       walks.iterator
     }
 
-    final def walk() = {
+    final def walk(): RDD[(VertexId, Node)] = {
       val partitionWalks = graph.triplets.mapPartitions(partition => generateWalkedNodes(partition))
       partitionWalks
     }
