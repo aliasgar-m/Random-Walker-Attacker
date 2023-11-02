@@ -18,6 +18,8 @@ object Matcher {
     def matchPairs(orgGraph: Graph[Node, Edge_]): List[(((VertexId, Node), (VertexId, Node)), Double)] = {
       val impOriginalNodes = orgGraph.vertices.filter(node => node._2.valuableData).collect
       val matches = walkedNodes.mapPartitions(partition => generateMatches(partition, impOriginalNodes)).collect
+
+      println(s"Matched: ${matches.toList}")
       matches.toList
     }
 

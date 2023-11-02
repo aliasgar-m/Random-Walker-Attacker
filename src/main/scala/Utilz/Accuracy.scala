@@ -11,8 +11,8 @@ object Accuracy {
       "Number of Walks per Partition" -> RWAConfig.noOfWalksPerPartition,
       "Matching Pairs Threshold" -> RWAConfig.matchingThreshold,
       "Attacking Pairs Threshold" -> RWAConfig.attackingThreshold,
-      "Total Successes" -> overallSuccess,
-      "Total Failures" -> overallFailures
+      "Total Successes" -> overallSuccess.size,
+      "Total Failures" -> overallFailures.size
     )
 
     fileOperator.saveAccuracyModel()

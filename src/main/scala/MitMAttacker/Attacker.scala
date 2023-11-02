@@ -13,10 +13,14 @@ object Attacker {
   implicit class Attack(matchedPairs: List[(((VertexId, Node), (VertexId, Node)), Double)]) extends Serializable {
     def attack(): String = {
       val attackPairs = matchedPairs.filter(entry => entry._2 >= RWAConfig.attackingThreshold)
-      val randomAttackedPair = Random.shuffle(attackPairs).head
+      if (attackPairs.nonEmpty) {
+        val randomAttackedPair = Random.shuffle(attackPairs).head
+        println(s"Attacked: $randomAttackedPair")
 
-      val result = generateResult(randomAttackedPair)
-      result
+        val result = generateResult(randomAttackedPair)
+        result
+      }
+      else { "Not Found" }
     }
 
     private def generateResult(attackPair: (((VertexId, Node), (VertexId, Node)), Double)): String = {

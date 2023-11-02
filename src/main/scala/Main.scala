@@ -35,7 +35,7 @@ object Main {
       val trailResults = trails.map(trial => trial -> perGraphXModel.walk().matchPairs(orgGraphXModel).attack())
 
       val resultMap = generateAccuracy(trailResults)
-      println(resultMap)
+      println(resultMap.foreach(entry => println(entry)))
     }
     else {
       logger.error("Either the Original or Perturbed NetGraph is empty.")
