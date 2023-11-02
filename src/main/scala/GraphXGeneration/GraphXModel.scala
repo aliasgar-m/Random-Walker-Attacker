@@ -24,8 +24,8 @@ class GraphXModel {
   }
 
   /** Does something very simple */
-  private def createEdge(edge: Action): GraphXGeneration.Edge = {
-    GraphXGeneration.Edge(
+  private def createEdge(edge: Action): Edge_ = {
+    Edge_(
       actionType = edge.actionType,
       fromId = edge.fromId,
       toId = edge.toId,
@@ -34,8 +34,8 @@ class GraphXModel {
   }
 
   /** Does something very simple */
-  def createGraph(nodes: RDD[(VertexId, GraphXGeneration.Node)], edges: RDD[Edge[GraphXGeneration.Edge]]):
-  Graph[GraphXGeneration.Node, GraphXGeneration.Edge] = {
+  def createGraph(nodes: RDD[(VertexId, GraphXGeneration.Node)], edges: RDD[Edge[Edge_]]):
+  Graph[GraphXGeneration.Node, Edge_] = {
     val graph = Graph(nodes, edges)
     graph
   }
@@ -48,7 +48,7 @@ object GraphXModel {
 
   /** Does something very simple */
   def apply(inputNetGraph: List[NetGraphComponent], sc: SparkContext):
-  Graph[GraphXGeneration.Node, GraphXGeneration.Edge] = {
+  Graph[GraphXGeneration.Node, Edge_] = {
     val graphReader = new ObtainGraphInformation(graph = inputNetGraph)
     val nodesNetGraph: Seq[NodeObject] = graphReader.getNodes
     val edgesNetGraph: Seq[Action] = graphReader.getEdges
@@ -56,7 +56,7 @@ object GraphXModel {
     val nodesGraphX: RDD[(VertexId, GraphXGeneration.Node)] = sc.parallelize(nodesNetGraph.map(
       node => (node.id.asInstanceOf[Number].longValue(), instanceObject.createNode(node))))
 
-    val edgesGraphX: RDD[Edge[GraphXGeneration.Edge]] = sc.parallelize(edgesNetGraph.map(
+    val edgesGraphX: RDD[Edge[Edge_]] = sc.parallelize(edgesNetGraph.map(
       edge => Edge(edge.fromNode.id, edge.toNode.id, instanceObject.createEdge(edge))))
 
     val graph = instanceObject.createGraph(nodesGraphX, edgesGraphX)

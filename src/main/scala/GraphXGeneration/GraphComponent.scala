@@ -11,5 +11,5 @@ case class Node(children: Int, props: Int, currentDepth: Int = 1,
 
 /** Does something very simple */
 @SerialVersionUID(123L)
-case class Edge(actionType: Int, fromId: Int, toId: Int,
+case class Edge_(actionType: Int, fromId: Int, toId: Int,
                 resultingValue: Option[Int], cost: Double) extends GraphComponent
