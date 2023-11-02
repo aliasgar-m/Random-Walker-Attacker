@@ -30,8 +30,9 @@ object Main {
       val perGraphXModel = GraphXModel(inputNetGraph = perNetGraph.get, sc = sparkContext)
 
       val trails = List.range(0, RWAConfig.noOfTrials)
-      val trailResults = trails.map(trial => trial -> perGraphXModel.walk()
-      )
+      val trailResults = trails.map(trial => trial -> perGraphXModel.walk())
+
+//      trailResults.foreach(trial => { println(trial._2.toList); println("")})
     }
     else {
       logger.error("Either the Original or Perturbed NetGraph is empty.")
@@ -49,6 +50,7 @@ object Main {
 // ASK PROFESSOR HOW TO USE CLASSES TAGS WITH USER DEFINED CLASSES.
 // CAN WE WALK BY CREATING SUBGRAPH? TO OPTIMIZE CODE BY REDUCING DEPENDENT PARAMS OF A FUNCTION?
 // SEND ORG GRAPH AS A BROADCAST AS WELL.
+// to save and optimize code by saving walks generated, change flatmap to map to give List[List[()]]
 
 
 // CREATE BROADCAST VARIABLE TO STORE ALL RANDOM WALKS.

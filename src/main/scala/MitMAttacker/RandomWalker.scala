@@ -69,7 +69,7 @@ object RandomWalker {
       val partitionEdges: List[(graphx.VertexId, graphx.VertexId, Edge_)] = getDistinctEdges(partitionList)
 
       val iteratedWalks = List.range(0, RWAConfig.noOfWalksPerPartition)
-      val walks = iteratedWalks.map(walkNo => walkNo -> startWalk(partitionNodes, partitionEdges)).toMap
+      val walks = iteratedWalks.flatMap(_ => startWalk(partitionNodes, partitionEdges))
       walks.iterator
     }
 
@@ -78,32 +78,4 @@ object RandomWalker {
       partitionWalks
     }
   }
-
-//  /** Does something very simple */
-//  implicit class Walker(graph: Graph[Node, Edge_]) extends Serializable {
-//    private def getDistinctNodes(part: List[EdgeTriplet[GraphXGeneration.Node, Edge_]]): List[(graphx.VertexId, GraphXGeneration.Node)] = {
-//      val partitionNodes = part.map(triplet => (triplet.toTuple._1, triplet.toTuple._2))
-//        .flatMap{ case (a, b) => List(a, b)}
-//        .distinct
-//      partitionNodes
-//    }
-//
-////    private def getDistinctEdges(part: List[EdgeTriplet[VD, ED]]) = {
-////      part.map(triplet => triplet.toTuple._3).distinct
-////    }
-//
-//    private def generateNodes(partition: Iterator[EdgeTriplet[GraphXGeneration.Node, Edge_]],
-//                              sc: SparkContext) = {
-//      val partitionList = partition.toList
-//      val partitionNodes = sc.parallelize(getDistinctNodes(partitionList))
-////      val partitionEdges = sc.parallelize(getDistinctEdges(partitionList))
-//
-////      val subgraph = Graph(partitionNodes, partitionEdges)
-//    }
-//
-//    final def walk(sc: SparkContext) = {
-////        .distinct
-//      partitionWalks
-//    }
-//  }
 }
