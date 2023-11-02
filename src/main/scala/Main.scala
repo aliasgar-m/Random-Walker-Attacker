@@ -1,10 +1,10 @@
 package com.lsc
 
 import GraphXGeneration.GraphXModel
+import MitMAttacker.Matcher.Match
 import MitMAttacker.RandomWalker.Walker
 import Utilz.{CreateLogger, FileOperations, RWAConfig}
 import org.apache.spark
-import org.apache.spark.graphx
 
 /** Does something very simple */
 object Main {
@@ -30,7 +30,7 @@ object Main {
       val perGraphXModel = GraphXModel(inputNetGraph = perNetGraph.get, sc = sparkContext)
 
       val trails = List.range(0, RWAConfig.noOfTrials)
-      val trailResults = trails.map(trial => trial -> perGraphXModel.walk())
+      val trailResults = trails.map(trial => trial -> perGraphXModel.walk().matchPairs(orgGraphXModel))
 
 //      trailResults.foreach(trial => { println(trial._2.toList); println("")})
     }
@@ -59,3 +59,6 @@ object Main {
 // NEED TO LOG THE WALKS GENERATED I.E. THE BROADCAST VARIABLE, SEE HOW THAT CAN BE DONE.
 // ADD LOGGING STATEMENTS AND LOOK AT CODE IF IT REQUIRES MORE CLEANING
 // ALLOW USER TO SELECT THE PARAMETERS FOR SIMILARITY THAT WILL BE COUNTED FOR MATCHING / SIMILARITY MEASURE.
+
+// MATCHER
+// ASSUME TAKING FIRST VALUE OF THE FILTER PROCESS. HIGHLY UNLIKELY THAT TWO PAIRS WILL HAVE IDENTICAL SIMILARITY.

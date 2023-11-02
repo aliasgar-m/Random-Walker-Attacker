@@ -16,4 +16,15 @@ object RWAConfig {
 
   val noOfSteps: Int = config.getInt("RWAApp.walker.noOfSteps")
   val noOfWalksPerPartition: Int = config.getInt("RWAApp.walker.noOfWalksPerPartition")
+
+  val childrenWeight: Double = config.getDouble("RWAApp.matcher.childrenWeight")
+  val propertiesWeight: Double = config.getDouble("RWAApp.matcher.propertiesWeight")
+  val currentDepthWeight: Double = config.getDouble("RWAApp.matcher.currentDepthWeight")
+  val propValueRangeWeight: Double = config.getDouble("RWAApp.matcher.propValueRangeWeight")
+  val maxDepthWeight: Double = config.getDouble("RWAApp.matcher.maxDepthWeight")
+  val maxBranchingFactorWeight: Double = config.getDouble("RWAApp.matcher.maxBranchingFactorWeight")
+  val maxPropertiesWeight: Double = config.getDouble("RWAApp.matcher.maxPropertiesWeight")
+  val storedValueWeight: Double = config.getDouble("RWAApp.matcher.storedValueWeight")
+
+  val matchingThreshold: Double = config.getDouble("RWAApp.matcher.matchingThreshold")
 }
