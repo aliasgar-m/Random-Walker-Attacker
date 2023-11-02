@@ -1,8 +1,10 @@
 package com.lsc
 
 import GraphXGeneration.GraphXModel
+import MitMAttacker.RandomWalker.Walker
 import Utilz.{CreateLogger, FileOperations, RWAConfig}
 import org.apache.spark
+import org.apache.spark.graphx
 
 /** Does something very simple */
 object Main {
@@ -26,6 +28,10 @@ object Main {
     if (orgNetGraph.nonEmpty && perNetGraph.nonEmpty) {
       val orgGraphXModel = GraphXModel(inputNetGraph = orgNetGraph.get, sc = sparkContext)
       val perGraphXModel = GraphXModel(inputNetGraph = perNetGraph.get, sc = sparkContext)
+
+      val trails = List.range(0, RWAConfig.noOfTrials)
+      val trailResults = trails.map(trial => trial -> perGraphXModel.walk()
+      )
     }
     else {
       logger.error("Either the Original or Perturbed NetGraph is empty.")
@@ -36,6 +42,14 @@ object Main {
     sparkContext.stop()
   }
 }
+
+// VERY IMPORTANT
+// NEED TO ADD DEFAULT VALUE TO MAP TO TAKE INTO CONSIDERATION DISJOINT MAP
+// SEND SPARK CONTEXT AS MESSAGE TO ALL NODES
+// ASK PROFESSOR HOW TO USE CLASSES TAGS WITH USER DEFINED CLASSES.
+// CAN WE WALK BY CREATING SUBGRAPH? TO OPTIMIZE CODE BY REDUCING DEPENDENT PARAMS OF A FUNCTION?
+// SEND ORG GRAPH AS A BROADCAST AS WELL.
+
 
 // CREATE BROADCAST VARIABLE TO STORE ALL RANDOM WALKS.
 // ADD CHECK TO ENSURE RANDOM WALK NOT COMPUTED AGAIN.
