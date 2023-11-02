@@ -4,8 +4,8 @@ import GraphXGeneration.GraphXModel
 import MitMAttacker.Attacker.Attack
 import MitMAttacker.Matcher.Match
 import MitMAttacker.RandomWalker.Walker
+import Utilz.Accuracy.generateAccuracy
 import Utilz.{CreateLogger, FileOperations, RWAConfig}
-
 import org.apache.spark
 
 /** Does something very simple */
@@ -34,7 +34,8 @@ object Main {
       val trails = List.range(0, RWAConfig.noOfTrials)
       val trailResults = trails.map(trial => trial -> perGraphXModel.walk().matchPairs(orgGraphXModel).attack())
 
-      trailResults.foreach(trial => { println(trial._2) })
+      val resultMap = generateAccuracy(trailResults)
+      println(resultMap)
     }
     else {
       logger.error("Either the Original or Perturbed NetGraph is empty.")

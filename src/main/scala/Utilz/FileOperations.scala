@@ -35,4 +35,6 @@ class FileOperations {
 
   /** Does something very simple */
   def saveGraphXModel(): Unit = {}
+
+  def saveAccuracyModel(): Unit = {}
 }
