@@ -90,7 +90,8 @@ The outcome has the following information:
 - **Success Probability Percentage**: Percentage of success calculated as `Total Successful Trials / Number of Trials` 
 
 An example is given below:
-![RWA-Output] (https://github.com/aliasgar-m/Random-Walker-Attacker/blob/096930b7a7f12e355089ba55bd4c3962ee28e6fe/images/result.png)
+
+![images/result.png](https://github.com/aliasgar-m/Random-Walker-Attacker/blob/a56aaa4eae2c5b3b57588788fcceb44ecc6ba4e2/images/result.png)
 
 ## References
 - https://spark.apache.org/docs/latest/quick-start.html
