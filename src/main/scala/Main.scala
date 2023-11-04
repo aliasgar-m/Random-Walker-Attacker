@@ -1,19 +1,43 @@
 package com.lsc
 
-import GraphXGeneration.GraphXModel
+import GraphXGeneration.{GraphXModel, Node}
 import MitMAttacker.Attacker.Attack
 import MitMAttacker.Matcher.Match
 import MitMAttacker.RandomWalker.Walker
 import Utilz.Accuracy.generateAccuracy
 import Utilz.{CreateLogger, FileOperations, RWAConfig}
 import org.apache.spark
+import org.apache.spark.graphx.VertexId
 
-/** Does something very simple */
+import java.io.File
+
+/**
+ * A utility object that provides an entry point for the project.
+ */
 object Main {
-  private val logger = CreateLogger(classOf[Main.type])
+  private val logger = CreateLogger(this.getClass)
 
-  /** Does something very simple */
+  /**
+   *  Replicates an Insider Attacker trying to gain access to company's secure computers
+   *  in order to steal valuable data and returns the result of the attack.
+   *
+   *  This program is performed in a distributed environment and can act as a toolkit to
+   *  test a company's defense mechanism.
+   *
+   *  ==Project Design==
+   *  1.
+   *  2.
+   *  3.
+   *  4.
+   *  5.
+   *  6.
+   *  7.
+   *  8.
+   *  9.
+   *
+   */
   def main(args: Array[String]): Unit = {
+    logger.info("Starting Spark Session.")
     val sparkSession = spark.sql.SparkSession
       .builder()
       .appName(name = RWAConfig.sparkAppName)
@@ -21,49 +45,62 @@ object Main {
       .getOrCreate()
 
     val sparkContext = sparkSession.sparkContext
-
     val FileOperator = new FileOperations()
 
+    logger.info("Deserializing and Loading the Original NetGraph.")
     val orgNetGraph = FileOperator.loadNetGraph(inputDir = RWAConfig.inputDir, inputFile = RWAConfig.orgInputFile)
+
+    logger.info("Deserializing and Loading the Perturbed NetGraph.")
     val perNetGraph = FileOperator.loadNetGraph(inputDir = RWAConfig.inputDir, inputFile = RWAConfig.perInputFile)
 
     if (orgNetGraph.nonEmpty && perNetGraph.nonEmpty) {
+      logger.info("Original and Perturbed Graphs have been deserialized and loaded.")
+      logger.info("Now generating GraphX Models for the Original and Perturbed Graphs.")
+
       val orgGraphXModel = GraphXModel(inputNetGraph = orgNetGraph.get, sc = sparkContext)
+      logger.info("Original GraphX Model generated.")
+
+      val impOrgGraphNodes = orgGraphXModel.vertices.filter(node => node._2.valuableData).collect
+      logger.info("Important nodes of the original graph have been retrieved.")
+
       val perGraphXModel = GraphXModel(inputNetGraph = perNetGraph.get, sc = sparkContext)
+      logger.info("Perturbed GraphX Model generated.")
 
       val trails = List.range(0, RWAConfig.noOfTrials)
-      val trailResults = trails.map(trial => trial -> perGraphXModel.walk().matchPairs(orgGraphXModel).attack())
+      val broadcastOrgGraphImpNodes = sparkContext.broadcast(impOrgGraphNodes)
 
-      val resultMap = generateAccuracy(trailResults)
-      println(resultMap.foreach(entry => println(entry)))
+      logger.info(s"Performing walks, matches, and attacks on the perturbed graph for ${trails.length} trials" +
+        s"and generating a results map.")
+      val trailResults = trails.map(trial => trial -> {
+        val walkAccumulator = sparkContext.collectionAccumulator[List[(VertexId, Node)]]
+        perGraphXModel.walk(walkAccumulator).matchPairs(broadcastOrgGraphImpNodes).attack()})
+
+      logger.info("Generating the Accuracy Model.")
+      val accuracyModel = generateAccuracy(results = trailResults)
+
+      val currDir = System.getProperty("user.dir")
+      val resultantDir = new File(s"$currDir${RWAConfig.outputDir}")
+
+      if (resultantDir.exists()) {
+        resultantDir.delete()
+        resultantDir.mkdir()
+      } else { resultantDir.mkdir() }
+
+      logger.info("Saving the Original GraphX Model.")
+      FileOperator.saveGraphXModel(graph = orgGraphXModel, inputFile = RWAConfig.orgGraphXFile)
+
+      logger.info("Saving the Perturbed GraphX Model.")
+      FileOperator.saveGraphXModel(graph = perGraphXModel, inputFile = RWAConfig.perGraphXFile)
+
+      logger.info("Saving the accuracy model.")
+      FileOperator.saveAccuracyModel(outcome = accuracyModel)
+
     }
     else {
       logger.error("Either the Original or Perturbed NetGraph is empty.")
       logger.error("Since either of the graphs are empty, the process cannot be continued further.")
       logger.error("Exiting.")
     }
-
     sparkContext.stop()
   }
 }
-
-// VERY IMPORTANT
-// NEED TO ADD DEFAULT VALUE TO MAP TO TAKE INTO CONSIDERATION DISJOINT MAP
-// SEND SPARK CONTEXT AS MESSAGE TO ALL NODES
-// ASK PROFESSOR HOW TO USE CLASSES TAGS WITH USER DEFINED CLASSES.
-// CAN WE WALK BY CREATING SUBGRAPH? TO OPTIMIZE CODE BY REDUCING DEPENDENT PARAMS OF A FUNCTION?
-// SEND ORG GRAPH AS A BROADCAST AS WELL.
-// to save and optimize code by saving walks generated, change flatmap to map to give List[List[()]]
-
-
-// CREATE BROADCAST VARIABLE TO STORE ALL RANDOM WALKS.
-// ADD CHECK TO ENSURE RANDOM WALK NOT COMPUTED AGAIN.
-// CREATE VISUALIZATION IF POSSIBLE.
-// NEED TO LOG THE WALKS GENERATED I.E. THE BROADCAST VARIABLE, SEE HOW THAT CAN BE DONE.
-// ADD LOGGING STATEMENTS AND LOOK AT CODE IF IT REQUIRES MORE CLEANING
-// ALLOW USER TO SELECT THE PARAMETERS FOR SIMILARITY THAT WILL BE COUNTED FOR MATCHING / SIMILARITY MEASURE.
-
-// MATCHER
-// ASSUME TAKING FIRST VALUE OF THE FILTER PROCESS. HIGHLY UNLIKELY THAT TWO PAIRS WILL HAVE IDENTICAL SIMILARITY.
-// CAN I CHANGE MATCHER'S MAP CODE TO MAP / REDUCE IN DISTRIBUTED SYSTEM FORMAT?
-

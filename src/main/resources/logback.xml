@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration>
+
+<configuration>
+    <import class="ch.qos.logback.core.ConsoleAppender"/>
+    <import class="ch.qos.logback.core.rolling.RollingFileAppender"/>
+    <import class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"/>
+
+    <appender name="STDOUT" class="ConsoleAppender">
+        <encoder>
+            <pattern> %d %-5level [%t] %logger{0} - %msg %ex %n </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="RollingFileAppender">
+        <rollingPolicy class="TimeBasedRollingPolicy">
+            <fileNamePattern>log/rwaLog_%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>100</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern> %d %-5level [%t] %logger{0} - %msg %ex %n </pattern>
+        </encoder>
+    </appender>
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

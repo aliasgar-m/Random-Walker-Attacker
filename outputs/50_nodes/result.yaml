@@ -1,0 +1,10 @@
+---
+Number of Trials: 5
+Number of Walks per Partition: 5
+Steps per walk: 3
+Matching Pairs Threshold: 0.85
+Attacking Pairs Threshold: 0.95
+Total Successful Trials: 3
+Total Failed Trials: 0
+Total DeadEnds Trials: 2
+Success Probability Percentage: 60

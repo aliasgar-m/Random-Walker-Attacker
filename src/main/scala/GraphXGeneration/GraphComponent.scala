@@ -1,15 +1,21 @@
 package GraphXGeneration
 
-/** Does something very simple */
+/**
+ * Trait that represents a GraphComponent and acts as an interface to created Nodes and Edges.
+ * */
 trait GraphComponent extends Serializable
 
-/** Does something very simple */
+/**
+ * Case class that represents a Node attribute.
+ * */
 @SerialVersionUID(123L)
-case class Node(children: Int, props: Int, currentDepth: Int = 1,
-                propValueRange:Int, maxDepth:Int, maxBranchingFactor:Int,
-                maxProperties:Int, storedValue: Double, valuableData: Boolean = false) extends GraphComponent
+case class Node(children: Int = 0, props: Int = 0, currentDepth: Int = 1,
+                propValueRange:Int = 0, maxDepth:Int = 0, maxBranchingFactor:Int = 0,
+                maxProperties:Int = 0, storedValue: Double = 0.0, valuableData: Boolean = false) extends GraphComponent
 
-/** Does something very simple */
+/**
+ * Case class that represents an Edge attribute.
+ * */
 @SerialVersionUID(123L)
 case class Edge_(actionType: Int, fromId: Int, toId: Int,
                 resultingValue: Option[Int], cost: Double) extends GraphComponent
