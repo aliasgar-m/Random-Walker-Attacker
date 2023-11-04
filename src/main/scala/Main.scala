@@ -24,17 +24,6 @@ object Main {
    *  This program is performed in a distributed environment and can act as a toolkit to
    *  test a company's defense mechanism.
    *
-   *  ==Project Design==
-   *  1.
-   *  2.
-   *  3.
-   *  4.
-   *  5.
-   *  6.
-   *  7.
-   *  8.
-   *  9.
-   *
    */
   def main(args: Array[String]): Unit = {
     logger.info("Starting Spark Session.")
