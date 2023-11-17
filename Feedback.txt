@@ -1,0 +1,7 @@
+Student: Aliasgar Merchant
+
+No AWS deployment/Video = -0.5%
+
+Good solution. I can see that you have a good grasp of what is required from this homework. Keep it up! I would have liked to see this deployed on AWS, but good job overall.
+
+Final Grade: 14.5%
